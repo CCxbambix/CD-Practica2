@@ -44,6 +44,19 @@ static void procesar_trabajo_busqueda(
      * 3. Guardar verdadero o falso en respuesta.valor.
      * 4. Enviar la respuesta al coordinador.
      */
+    EstadoBusqueda *estado = nodo->estado;
+    //Buscamos el valor del punto 1
+    int valorDato = mensaje->datos[mensaje->valor];
+    //Creamos una variable para nuestro mensaje
+    Mensaje respuesta;
+    if(!mensaje_crear(&respuesta,MSG_BUSCAR_RESULTADO,nodo->id,nodo->id,valorDato,NULL,0)){
+        simulador->error_memoria=true;
+        return;
+    }
+    if(!simulador_enviar(simulador,0,&respuesta,TICK_BUSQUEDA)){
+        simulador->error_memoria = true;
+        return;
+    }
 }
 
 static void procesar_resultado_busqueda(Nodo *nodo,
