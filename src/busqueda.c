@@ -133,7 +133,21 @@ bool nodo_busqueda_iniciar(Nodo *nodo,
      * 3. Colocar el elemento buscado en mensaje.valor.
      * 4. Enviar un segmento a cada trabajador.
      */
+    int *secondArray;
+    if(!cuadricula_crear(arreglo,longitud,nodo->cantidad_vecinos,secondArray)){
+        simulador->error_memoria = true;
+        return false:
+    }
 
+    Mensaje buscarTrabajo;
+    if(!mensaje_crear(&buscarTrabajo,MSG_BUSCAR_TRABAJO,nodo->id,nodo->id,elemento,secondArray,0)){
+        simulador->error_memoria = true;
+        return false;
+    }
+    if(!simulador_enviar_a_vecinos(simulador,nodo,&buscarTrabajo,TICK_BUSQUEDA,-1)){
+        simulador->error_memoria = true;
+        return false
+    }
     return true;
 }
 
