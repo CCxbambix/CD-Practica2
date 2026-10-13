@@ -118,6 +118,11 @@ bool busqueda_lineal(const int *arreglo, size_t longitud, int elemento) {
      * Buscar el elemento recorriendo el arreglo.
      */
 
+    for(size_t i = 0; i<longitud;i++){
+        if(arreglo[i]== elemento){
+            return true;
+        }
+    }
     return false;
 }
 
