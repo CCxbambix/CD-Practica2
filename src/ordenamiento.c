@@ -177,10 +177,6 @@ bool nodo_ordenamiento_iniciar(Nodo *nodo,
     (void)simulador;
     (void)arreglo;
     (void)longitud;
-    if(!mensaje_crear(&buscarTrabajo,MSG_BUSCAR_TRABAJO,nodo->id,nodo->id,elemento,secondArray,0)){
-        simulador->error_memoria = true;
-        return false;
-    }
     /*
      * TODO para el coordinador:
      * 1. Dividir el arreglo con cuadricula_crear.
@@ -193,7 +189,7 @@ bool nodo_ordenamiento_iniciar(Nodo *nodo,
     int *secondArray;
     if(!cuadricula_crear(arreglo,longitud,nodo->cantidad_vecinos,secondArray)){
         simulador->error_memoria = true;
-        return false:
+        return false;
     }
     Mensaje ordenarChamba;
     if(!mensaje_crear(&ordenarChamba,MSG_ORDENAR_TRABAJO,nodo->id,nodo->id,NULL,secondArray,0)){
@@ -201,7 +197,7 @@ bool nodo_ordenamiento_iniciar(Nodo *nodo,
         return false;
     }
     for(size_t i = 1; i<=nodo->cantidad_vecinos; i++){
-        if(!simulador_enviar(simulador,i, secondArray[i],TICK_ORDENAMIENTO)){
+        if(!simulador_enviar(simulador,i,&secondArray[i],TICK_ORDENAMIENTO)){
             simulador->error_memoria = true;
         }
     }

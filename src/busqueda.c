@@ -44,7 +44,6 @@ static void procesar_trabajo_busqueda(
      * 3. Guardar verdadero o falso en respuesta.valor.
      * 4. Enviar la respuesta al coordinador.
      */
-    EstadoBusqueda *estado = nodo->estado;
     //Buscamos el valor del punto 1
     int valorDato = mensaje->datos[mensaje->valor];
     //Creamos una variable para nuestro mensaje
@@ -136,7 +135,7 @@ bool nodo_busqueda_iniciar(Nodo *nodo,
     int *secondArray;
     if(!cuadricula_crear(arreglo,longitud,nodo->cantidad_vecinos,secondArray)){
         simulador->error_memoria = true;
-        return false:
+        return false;
     }
 
     Mensaje buscarTrabajo;
@@ -146,7 +145,7 @@ bool nodo_busqueda_iniciar(Nodo *nodo,
     }
     if(!simulador_enviar_a_vecinos(simulador,nodo,&buscarTrabajo,TICK_BUSQUEDA,-1)){
         simulador->error_memoria = true;
-        return false
+        return false;
     }
     return true;
 }
