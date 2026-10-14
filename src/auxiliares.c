@@ -106,6 +106,17 @@ void ordenar_insercion(int *arreglo, size_t longitud) {
      * TODO:
      * Implementar un algoritmo simple de ordenamiento.
      */
+    for(size_t i = 1; i<= longitud-1; i++){
+        int temporal = arreglo[i];
+        for(size_t j = 0; j<=i-1;j++){
+            if(temp < arreglo[j]){
+                int auxiliar = arreglo[j];
+                arreglo[j] = temporal;
+                arreglo[i] = auxiliar;
+                temporal = auxiliar;
+            }
+        }
+    }
 }
 
 bool busqueda_lineal(const int *arreglo, size_t longitud, int elemento) {
@@ -118,7 +129,7 @@ bool busqueda_lineal(const int *arreglo, size_t longitud, int elemento) {
      * Buscar el elemento recorriendo el arreglo.
      */
 
-    for(size_t i = 0; i<longitud;i++){
+    for(size_t i = 0; i<=longitud-1;i++){
         if(arreglo[i]== elemento){
             return true;
         }
