@@ -109,7 +109,7 @@ void ordenar_insercion(int *arreglo, size_t longitud) {
     for(size_t i = 1; i<= longitud-1; i++){
         int temporal = arreglo[i];
         for(size_t j = 0; j<=i-1;j++){
-            if(temp < arreglo[j]){
+            if(temporal < arreglo[j]){
                 int auxiliar = arreglo[j];
                 arreglo[j] = temporal;
                 arreglo[i] = auxiliar;
