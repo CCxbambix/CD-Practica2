@@ -193,7 +193,7 @@ bool nodo_ordenamiento_iniciar(Nodo *nodo,
     }
     for(size_t i = 1; i<=nodo->cantidad_vecinos; i++){
         Mensaje buscarTrabajo;
-        if(!mensaje_crear(&buscarTrabajo,MSG_BUSCAR_TRABAJO,nodo->id,nodo->id,0,secondArray.segmentos[i],0)){
+        if(!mensaje_crear(&buscarTrabajo,MSG_ORDENAR_TRABAJO,nodo->id,nodo->id,0,secondArray.segmentos[i-1],secondArray.longitudes[i-1])){
         simulador->error_memoria = true;
         return false;
         }
