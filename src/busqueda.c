@@ -132,22 +132,34 @@ bool nodo_busqueda_iniciar(Nodo *nodo,
      * 3. Colocar el elemento buscado en mensaje.valor.
      * 4. Enviar un segmento a cada trabajador.
      */
+    EstadoBusqueda *estado = nodo->estado;
+    if(!estado->coordinador){
+        return true;
+    }
+    if(estado->iniciado){
+        return true;
+    }
+    estado->iniciado=true;
+    if(estado->esperados==0&&longitud>0){
+        return false;
+    }
     Cuadricula secondArray;
-    if(!cuadricula_crear(arreglo,longitud,nodo->cantidad_vecinos,&secondArray)){
+    if(!cuadricula_crear(arreglo,longitud,estado->esperados,&secondArray)){
         simulador->error_memoria = true;
         return false;
     }
-    for(size_t i = 1; i<=nodo->cantidad_vecinos; i++){
+    for(size_t i = 0; i<=estado->esperados-1; i++){
         Mensaje buscarTrabajo;
-        if(!mensaje_crear(&buscarTrabajo,MSG_BUSCAR_TRABAJO,nodo->id,nodo->id,elemento,secondArray.segmentos[i-1],secondArray.longitudes[i-1])){
+        if(!mensaje_crear(&buscarTrabajo,MSG_BUSCAR_TRABAJO,nodo->id,nodo->id,elemento,secondArray.segmentos[i],secondArray.longitudes[i])){
         simulador->error_memoria = true;
         return false;
         }
-        if(!simulador_enviar(simulador,i,&buscarTrabajo,TICK_BUSQUEDA)){
+        if(!simulador_enviar(simulador,nodo->vecinos[i],&buscarTrabajo,TICK_BUSQUEDA)){
             simulador->error_memoria = true;
             return false;
         }
     }
+    cuadricula_destruir(&secondArray);
     return true;
 }
 

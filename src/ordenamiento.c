@@ -186,22 +186,34 @@ bool nodo_ordenamiento_iniciar(Nodo *nodo,
      *
      * Los trabajadores no hacen nada al iniciar.
      */
+    EstadoOrdenamiento *estado = nodo->estado;
+    if(!estado->coordinador){
+        return true;
+    }
+    if(estado->iniciado){
+        return false;
+    }
+    estado->iniciado = true;
+    if(estado->esperados==0&&longitud>0){
+        return false;
+    }
     Cuadricula secondArray;
-    if(!cuadricula_crear(arreglo,longitud,nodo->cantidad_vecinos,&secondArray)){
+    if(!cuadricula_crear(arreglo,longitud,estado->esperados,&secondArray)){
         simulador->error_memoria = true;
         return false;
     }
-    for(size_t i = 1; i<=nodo->cantidad_vecinos; i++){
+    for(size_t i = 0; i<=estado->esperados-1; i++){
         Mensaje buscarTrabajo;
-        if(!mensaje_crear(&buscarTrabajo,MSG_ORDENAR_TRABAJO,nodo->id,nodo->id,0,secondArray.segmentos[i-1],secondArray.longitudes[i-1])){
+        if(!mensaje_crear(&buscarTrabajo,MSG_ORDENAR_TRABAJO,nodo->id,nodo->id,0,secondArray.segmentos[i],secondArray.longitudes[i])){
         simulador->error_memoria = true;
         return false;
         }
-        if(!simulador_enviar(simulador,i,&buscarTrabajo,TICK_ORDENAMIENTO)){
+        if(!simulador_enviar(simulador,nodo->vecinos[i],&buscarTrabajo,TICK_ORDENAMIENTO)){
             simulador->error_memoria = true;
             return false;
         }
     }
+    cuadricula_destruir(&secondArray);
     return true;
 }
 
