@@ -44,13 +44,22 @@ static void procesar_trabajo_busqueda(
      * 3. Guardar verdadero o falso en respuesta.valor.
      * 4. Enviar la respuesta al coordinador.
      */
-    //Buscamos el valor del punto 1
-    int valorDato = mensaje->datos[mensaje->valor];
-    //Creamos una variable para nuestro mensaje
+    
+    bool resultado = busqueda_lineal(mensaje->datos,mensaje->longitud,mensaje->valor);
+    int respuestBusquedalineal = 0;
+    if(resultado){
+        respuestBusquedalineal = 1;
+    }
     Mensaje respuesta;
-    if(!mensaje_crear(&respuesta,MSG_BUSCAR_RESULTADO,nodo->id,nodo->id,valorDato,NULL,0)){
-        simulador->error_memoria=true;
-        return;
+    if(!mensaje_crear(&respuesta,
+        MSG_BUSCAR_RESULTADO,
+        nodo->id,
+        nodo->id,
+        respuestBusquedalineal,//valor
+        NULL,//datos
+        0)){//longitud
+            simulador->error_memoria=true;
+            return;
     }
     if(!simulador_enviar(simulador,0,&respuesta,TICK_BUSQUEDA)){
         simulador->error_memoria = true;
@@ -133,15 +142,19 @@ bool nodo_busqueda_iniciar(Nodo *nodo,
      * 4. Enviar un segmento a cada trabajador.
      */
     EstadoBusqueda *estado = nodo->estado;
+    if(longitud==0){
+        estado->finalizo = true;
+        return false;
+    }
     if(!estado->coordinador){
         return true;
     }
     if(estado->iniciado){
-        return true;
-    }
-    estado->iniciado=true;
-    if(estado->esperados==0&&longitud>0){
         return false;
+    }
+    if(estado->esperados==0 && longitud >0){
+            busqueda_lineal(arreglo,longitud,elemento);
+            return true;
     }
     Cuadricula secondArray;
     if(!cuadricula_crear(arreglo,longitud,estado->esperados,&secondArray)){
@@ -159,7 +172,6 @@ bool nodo_busqueda_iniciar(Nodo *nodo,
             return false;
         }
     }
-    cuadricula_destruir(&secondArray);
     return true;
 }
 

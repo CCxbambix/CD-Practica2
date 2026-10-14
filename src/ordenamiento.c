@@ -194,8 +194,16 @@ bool nodo_ordenamiento_iniciar(Nodo *nodo,
         return false;
     }
     estado->iniciado = true;
-    if(estado->esperados==0&&longitud>0){
-        return false;
+    if(estado->esperados==0){
+        if(longitud==0){
+            estado->longitud_resultado = longitud;
+            estado->finalizo = true;
+            return true;
+        }
+        if(longitud > 0){
+            ordenar_insercion(estado->resultado,longitud);
+            return true;
+        }
     }
     Cuadricula secondArray;
     if(!cuadricula_crear(arreglo,longitud,estado->esperados,&secondArray)){
