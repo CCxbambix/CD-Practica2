@@ -64,17 +64,35 @@ static void recibir_convergecast(Nodo *nodo,
     (void)mensaje;
     (void)simulador;
 
-    /*
-     * TODO:
-     * 1. Comprobar que sea MSG_CONVERGECAST.
-     * 2. Verificar que el emisor sea un hijo.
-     * 3. Evitar procesar dos veces la misma respuesta.
-     * 4. Combinar el valor recibido con el acumulado.
-     * 5. Contar la respuesta.
-     * 6. Si respondieron todos los hijos:
-     *      - si es raíz, guardar el resultado;
-     *      - en otro caso, enviar el acumulado al padre.
-     */
+    if (nodo == NULL || mensaje == NULL || simulador == NULL || nodo->estado == NULL) {
+        return;
+    }
+    if (mensaje->tipo != MSG_CONVERGECAST) {
+        return;
+    }
+
+    EstadoConvergecast *estado = nodo->estado;
+
+    size_t indice = indice_hijo(nodo, mensaje->origen);
+
+    if (indice >= nodo->cantidad_vecinos) {
+        return;
+    }
+    if (estado->hijo_respondio[indice]) {
+        return;
+    }
+
+    estado->acumulado = estado->combinar(estado->acumulado, mensaje->valor);
+    estado->hijo_respondio[indice] = true;
+    estado->respuestas++;
+
+    if (estado->respuestas == nodo->cantidad_vecinos) {
+        if (nodo->id == estado->padre) {
+            estado->finalizo = true;
+        } else {
+            enviar_acumulado(nodo, estado, simulador);
+        }
+    }
 }
 
 Nodo *nodo_convergecast_crear(int id,
@@ -120,13 +138,18 @@ bool nodo_convergecast_iniciar(Nodo *nodo, Simulador *simulador) {
      (void)nodo;
     (void)simulador;
 
-    /*
-     * TODO:
-     * 1. Comprobar si el nodo es una hoja.
-     * 2. Si es raíz y hoja, finalizar.
-     * 3. Si es una hoja normal, enviar su valor al padre.
-     */
+    if (nodo == NULL || simulador == NULL || nodo->estado == NULL){
+        return false;
+    }
+    EstadoConvergecast *estado = nodo->estado;
 
+    if (nodo->cantidad_vecinos == 0) {
+        if (nodo->id == estado->padre) {
+            estado->finalizo = true;
+            return true;
+        }
+        return enviar_acumulado(nodo, estado, simulador);
+    }
     return true;
 }
 
