@@ -46,16 +46,19 @@ static void procesar_trabajo_busqueda(
      */
     
     bool resultado = busqueda_lineal(mensaje->datos,mensaje->longitud,mensaje->valor);
-    int respuestBusquedalineal = 0;
+    int respuestaBusquedalineal = 2;
     if(resultado){
-        respuestBusquedalineal = 1;
+        respuestaBusquedalineal = 1;
+    }
+    if(!resultado){
+        respuestaBusquedalineal = 0;
     }
     Mensaje respuesta;
     if(!mensaje_crear(&respuesta,
         MSG_BUSCAR_RESULTADO,
         nodo->id,
         nodo->id,
-        respuestBusquedalineal,//valor
+        respuestaBusquedalineal,//valor
         NULL,//datos
         0)){//longitud
             simulador->error_memoria=true;
@@ -152,9 +155,11 @@ bool nodo_busqueda_iniciar(Nodo *nodo,
     if(estado->iniciado){
         return false;
     }
+    estado->iniciado = true;
     if(estado->esperados==0 && longitud >0){
-            busqueda_lineal(arreglo,longitud,elemento);
-            return true;
+            bool resultado = busqueda_lineal(arreglo,longitud,elemento);
+            estado->finalizo = true;
+            return resultado;
     }
     Cuadricula secondArray;
     if(!cuadricula_crear(arreglo,longitud,estado->esperados,&secondArray)){
